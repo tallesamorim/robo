@@ -88,7 +88,7 @@ class TodoApp(ft.UserControl):
 
     def executarrobo(self, e):
         interacoes = int(self.repeticoes.value)
-        
+        pyautogui.FAILSAFE = True
         for y in range(interacoes):
             for i in range(len(self.tasks.controls)):
                 conteudo = self.tasks.controls[i].controls[0].controls[0].controls[0].label
@@ -102,7 +102,7 @@ class TodoApp(ft.UserControl):
                 elif conteudo[0] == 'Duplo Click':
                     pyautogui.doubleClick()
                 elif conteudo[0] == 'Pressionar tecla':
-                    pyautogui.press(str(conteudo[1]))
+                    pyautogui.press(str(conteudo[1]), interval=0.25)
                 elif conteudo[0] == 'Esperar':
                     time.sleep(int(conteudo[1]))
                 
