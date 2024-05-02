@@ -177,10 +177,60 @@ class Task(ft.UserControl):
 
 
 def main(page: ft.Page):
+    md1 = ['!', '"', '#', '$', '%', '&', "'", '(',
+            ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7',
+            '8', '9', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`',
+            'a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',
+            'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~',
+            'accept', 'add', 'alt', 'altleft', 'altright', 'apps', 'backspace',
+            'browserback', 'browserfavorites', 'browserforward', 'browserhome',
+            'browserrefresh', 'browsersearch', 'browserstop', 'capslock', 'clear',
+            'convert', 'ctrl', 'ctrlleft', 'ctrlright', 'decimal', 'del', 'delete',
+            'divide', 'down', 'end', 'enter', 'esc', 'escape', 'execute', 'f1', 'f10',
+            'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f2', 'f20',
+            'f21', 'f22', 'f23', 'f24', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9',
+            'final', 'fn', 'hanguel', 'hangul', 'hanja', 'help', 'home', 'insert', 'junja',
+            'kana', 'kanji', 'launchapp1', 'launchapp2', 'launchmail',
+            'launchmediaselect', 'left', 'modechange', 'multiply', 'nexttrack',
+            'nonconvert', 'num0', 'num1', 'num2', 'num3', 'num4', 'num5', 'num6',
+            'num7', 'num8', 'num9', 'numlock', 'pagedown', 'pageup', 'pause', 'pgdn',
+            'pgup', 'playpause', 'prevtrack', 'print', 'printscreen', 'prntscrn',
+            'prtsc', 'prtscr', 'return', 'right', 'scrolllock', 'select', 'separator',
+            'shift', 'shiftleft', 'shiftright', 'sleep', 'space', 'stop', 'subtract', 'tab',
+            'up', 'volumedown', 'volumemute', 'volumeup', 'win', 'winleft', 'winright', 'yen',
+            'command', 'option', 'optionleft', 'optionright']
     
-    def help(e):
-        
-        return
+    def view_pop(view):
+        page.views.pop()
+        top_view = page.views[-1]
+        page.go(top_view.route)
+
+    def on_route_change(route):
+        page.views.clear()
+        page.views.append(
+            ft.View(
+                '/',
+                [
+                   appbar,
+                   todo
+                ],
+                horizontal_alignment= ft.CrossAxisAlignment.CENTER
+            )
+        )
+        if page.route == "/Ajuda":
+            page.views.append(
+                ft.View(
+                    "/Ajuda",
+                    [
+                        ft.AppBar(title=ft.Text("Ajuda"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.Text("Nomes das teclas", theme_style=ft.TextThemeStyle.TITLE_LARGE),
+                        ft.Text(md1, selectable=True),
+                        ft.ElevatedButton("Voltar", on_click=lambda _: page.go("/")),
+                    ],
+                    horizontal_alignment= ft.CrossAxisAlignment.CENTER
+                )
+            )
+        page.update()
 
     def on_enter(e: ft.KeyboardEvent):
         if e.key == 'Enter':
@@ -199,8 +249,8 @@ def main(page: ft.Page):
         page.update()
 
     page.title = "Automação de tarefas"
-    page.horizontal_alignment = ft.CrossAxisAlignment.CENTER
-    page.appbar = ft.AppBar(
+
+    appbar = ft.AppBar(
         title=ft.Text(value='Automação', weight=True, size=22),
         center_title=True,
         actions=[
@@ -208,7 +258,7 @@ def main(page: ft.Page):
             ft.PopupMenuButton(
                 items=[
                     ft.PopupMenuItem(icon=ft.icons.BRIGHTNESS_4, text='Mudar tema', on_click=mudar_tema),
-                    ft.PopupMenuItem(icon=ft.icons.HELP_CENTER, text='Ajuda', on_click=''),
+                    ft.PopupMenuItem(icon=ft.icons.HELP_CENTER, text='Ajuda', on_click=lambda _ : page.go('/Ajuda')),
                     ft.PopupMenuItem(content=ft.Text("Sair do Sistema", color=ft.colors.RED), on_click=lambda _: page.window_destroy())
                 ]
             )
@@ -216,10 +266,12 @@ def main(page: ft.Page):
     )
 
     page.on_keyboard_event = on_enter
+    todo = TodoApp()
     page.update()
 
-    todo = TodoApp()
-    
-    page.add(todo)
+    page.on_route_change = on_route_change
+    page.on_view_pop = view_pop
+    page.go(page.route)
+    page.update()
 
 ft.app(target=main)
