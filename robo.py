@@ -12,6 +12,7 @@ class TodoApp(ft.UserControl):
                 ft.dropdown.Option("Escrever"),
                 ft.dropdown.Option("Mover mouse"),
                 ft.dropdown.Option("Click"),
+                ft.dropdown.Option("Mover Mouse e Click"),
                 ft.dropdown.Option("Duplo Click"),
                 ft.dropdown.Option("Pressionar tecla"),
                 ft.dropdown.Option("Esperar")
@@ -41,7 +42,7 @@ class TodoApp(ft.UserControl):
         
         return ft.Column(
             width=600,
-            height=700,
+            height=550,
             scroll=ft.ScrollMode.ALWAYS,
             controls=[
                 ft.Row(
@@ -59,7 +60,7 @@ class TodoApp(ft.UserControl):
         )
 
     def change_task(self,e):
-        if self.comands.value == 'Mover mouse':
+        if self.comands.value == 'Mover mouse' or self.comands.value == 'Mover Mouse e Click':
             self.display_coordenadas.visible = True
             self.view_task.visible = False
             self.update()
@@ -99,6 +100,8 @@ class TodoApp(ft.UserControl):
                     pyautogui.moveTo(int(conteudo[1]),int(conteudo[2]), duration=1)
                 elif conteudo[0] == 'Click':
                     pyautogui.click()
+                elif conteudo[0] == 'Mover Mouse e Click':
+                    pyautogui.click(int(conteudo[1]),int(conteudo[2]), duration=1)
                 elif conteudo[0] == 'Duplo Click':
                     pyautogui.doubleClick()
                 elif conteudo[0] == 'Pressionar tecla':
@@ -175,6 +178,10 @@ class Task(ft.UserControl):
 
 def main(page: ft.Page):
     
+    def help(e):
+        
+        return
+
     def on_enter(e: ft.KeyboardEvent):
         if e.key == 'Enter':
             x, y = pyautogui.position()
@@ -201,6 +208,7 @@ def main(page: ft.Page):
             ft.PopupMenuButton(
                 items=[
                     ft.PopupMenuItem(icon=ft.icons.BRIGHTNESS_4, text='Mudar tema', on_click=mudar_tema),
+                    ft.PopupMenuItem(icon=ft.icons.HELP_CENTER, text='Ajuda', on_click=''),
                     ft.PopupMenuItem(content=ft.Text("Sair do Sistema", color=ft.colors.RED), on_click=lambda _: page.window_destroy())
                 ]
             )
