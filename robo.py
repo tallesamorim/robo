@@ -109,8 +109,7 @@ class TodoApp(ft.UserControl):
                 elif conteudo[0] == 'Esperar':
                     time.sleep(int(conteudo[1]))
                 
-        
-
+    
 class Task(ft.UserControl):
     def __init__(self, task_name, task_delete):
         super().__init__()
@@ -177,6 +176,54 @@ class Task(ft.UserControl):
 
 
 def main(page: ft.Page):
+    
+
+    def view_pop(view):
+        page.views.pop()
+        top_view = page.views[-1]
+        page.go(top_view.route)
+
+    def on_route_change(route):
+        page.views.clear()
+       
+        page.views.append(
+            telainicial
+        )
+        if page.route == "/Ajuda":
+            page.views.append(
+                ft.View(
+                    "/Ajuda",
+                    [
+                        ft.AppBar(title=ft.Text("Ajuda"), bgcolor=ft.colors.SURFACE_VARIANT),
+                        ft.Text("Nomes das teclas", theme_style=ft.TextThemeStyle.TITLE_LARGE),
+                        ft.Text(md1, selectable=True),
+                        ft.ElevatedButton("Voltar", on_click=lambda _: page.go("/")),
+                    ],
+                    horizontal_alignment= ft.CrossAxisAlignment.CENTER
+                )
+            )
+        page.update()
+
+    
+    
+    
+    def on_enter(e: ft.KeyboardEvent):
+        if e.key == 'Enter':
+            x, y = pyautogui.position()
+            page.snack_bar = ft.SnackBar(
+                ft.Text(value=f'X={x} Y={y}')
+            )
+            page.snack_bar.open = True
+            page.update()
+
+    def mudar_tema(e):
+        if page.theme_mode == ft.ThemeMode.DARK:
+            page.theme_mode = ft.ThemeMode.LIGHT
+        else:
+            page.theme_mode = ft.ThemeMode.DARK
+        page.update()
+
+
     md1 = ['!', '"', '#', '$', '%', '&', "'", '(',
             ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7',
             '8', '9', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`',
@@ -200,56 +247,6 @@ def main(page: ft.Page):
             'up', 'volumedown', 'volumemute', 'volumeup', 'win', 'winleft', 'winright', 'yen',
             'command', 'option', 'optionleft', 'optionright']
     
-    def view_pop(view):
-        page.views.pop()
-        top_view = page.views[-1]
-        page.go(top_view.route)
-
-    def on_route_change(route):
-        page.views.clear()
-        page.views.append(
-            ft.View(
-                '/',
-                [
-                   appbar,
-                   todo
-                ],
-                horizontal_alignment= ft.CrossAxisAlignment.CENTER
-            )
-        )
-        if page.route == "/Ajuda":
-            page.views.append(
-                ft.View(
-                    "/Ajuda",
-                    [
-                        ft.AppBar(title=ft.Text("Ajuda"), bgcolor=ft.colors.SURFACE_VARIANT),
-                        ft.Text("Nomes das teclas", theme_style=ft.TextThemeStyle.TITLE_LARGE),
-                        ft.Text(md1, selectable=True),
-                        ft.ElevatedButton("Voltar", on_click=lambda _: page.go("/")),
-                    ],
-                    horizontal_alignment= ft.CrossAxisAlignment.CENTER
-                )
-            )
-        page.update()
-
-    def on_enter(e: ft.KeyboardEvent):
-        if e.key == 'Enter':
-            x, y = pyautogui.position()
-            page.snack_bar = ft.SnackBar(
-                ft.Text(value=f'X={x} Y={y}')
-            )
-            page.snack_bar.open = True
-            page.update()
-
-    def mudar_tema(e):
-        if page.theme_mode == ft.ThemeMode.DARK:
-            page.theme_mode = ft.ThemeMode.LIGHT
-        else:
-            page.theme_mode = ft.ThemeMode.DARK
-        page.update()
-
-    page.title = "Automação de tarefas"
-
     appbar = ft.AppBar(
         title=ft.Text(value='Automação', weight=True, size=22),
         center_title=True,
@@ -264,9 +261,21 @@ def main(page: ft.Page):
             )
         ]
     )
-
-    page.on_keyboard_event = on_enter
     todo = TodoApp()
+    telainicial = ft.View(
+                    '/',
+                    [
+                        appbar,
+                        todo
+                    ],
+                    horizontal_alignment= ft.CrossAxisAlignment.CENTER
+                )
+
+
+    page.title = "Automação de tarefas"
+    
+    page.on_keyboard_event = on_enter
+    
     page.update()
 
     page.on_route_change = on_route_change
